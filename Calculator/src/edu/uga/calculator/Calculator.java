@@ -7,7 +7,7 @@ public class Calculator {
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
 		boolean stop = false;
-		int value = 2147483647;
+		int value;
 		System.out.println("This Calculator allows for addition, subtraction, multiplication, and exponents of whole numbers\n"
 				+ "You can use the answer from the previous computation by simply starting with the sign you want to use.\n"
 				+ "To end the program, type \"stop\".\n");
