@@ -1,12 +1,15 @@
 package persontracker;
 
-public class Person {
+public class Visitor {
 	private int inTime;
 	private int outTime;
 	private int id;
 	private int currentVisitTime;
 	private int totalTime;
 	
+	public Visitor(int id){
+		this.id = id;
+	}
 	public void updateTotalTime(){
 		currentVisitTime = outTime - inTime; 
 		totalTime += currentVisitTime;
