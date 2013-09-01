@@ -1,37 +1,38 @@
 package edu.uga.DP135easy;
 
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 public class DP135easy{
-    private static int min;
-    private static int max;
+    private static double min;
+    private static double max;
     public static void main(String args[]){
         if(args.length != 2){
-            System.out.println("Please input two integers to use for a range");
+            System.out.println("Please input two doubles to use for a range");
         }
         try{
-            min = Integer.parseInt(args[0]);
-            max = Integer.parseInt(args[1]);
+            min = Double.parseDouble(args[0]);
+            max = Double.parseDouble(args[1]);
         }catch(Exception e){
-            System.out.println("Please input two integers to use for a range");
+            System.out.println("Please input two doubles to use for a range");
             return;
         }
-        int[] integers = new int[4];
+        double[] doubles = new double[4];
         int[] operators = new int[3];
         Scanner in = new Scanner(System.in);
         Boolean stop = false;
-        int solution = max*4+1;
-        int answer = max*4+1;
+        double solution = max*4+1;
+        double answer = max*4+1;
         while(!stop){
             for (int i = 0; i < 4; i++){
-                integers[i] = min + (int)(Math.random() * ((max - min) + 1));
+                doubles[i] = min + (int)(Math.random() * ((max - min) + 1));
             }
             String beingEvaluated = new String();
             for(int i = 0; i < 3; i++){
-                operators[i] = (int) (Math.random()*3);
+                operators[i] = (int) (Math.random()*4);
             }
-            beingEvaluated = integers[0]+intToOperator(operators[0])+integers[1]+intToOperator(operators[1])+integers[2]+intToOperator(operators[2])+
-            integers[3];
+            beingEvaluated = doubles[0]+intToOperator(operators[0])+doubles[1]+intToOperator(operators[1])+doubles[2]+intToOperator(operators[2])+
+            doubles[3];
             System.out.println(beingEvaluated);
             solution = evaluate(beingEvaluated);
             do{
@@ -44,7 +45,7 @@ public class DP135easy{
                 }
                 else{
                     try{    
-                        answer = Integer.parseInt(input);
+                        answer = Double.parseDouble(input);
                     }catch(Exception e){
                         answer = (max*4)+1;
                         //System.out.println("failed"); used for testing
@@ -57,15 +58,17 @@ public class DP135easy{
         }
         in.close();
     }
-    private static int evaluate(String str){
+    private static double evaluate(String str){
         //System.out.println(str); used for testing
         //No more operators, therefore the final number
     	if(opCount(str) == 0){
-            return Integer.parseInt(str);
+            //System.out.println(roundTo2Decimals(Double.parseDouble(str))); testing
+            return roundTo2Decimals(Double.parseDouble(str));
         }
     	//a negative number
         if(opCount(str) == 1 && str.startsWith("-")){
-            return (-1)*Integer.parseInt(str.substring(1));
+            //System.out.println((-1)*roundTo2Decimals(Double.parseDouble(str.substring(1)))); testing
+            return (-1)*roundTo2Decimals(Double.parseDouble(str.substring(1)));
         }
         /*it reduces to a negative at the front while still having other operators.
          * Have to handle each successive operator separately.
@@ -80,48 +83,79 @@ public class DP135easy{
             if(nextOpIs(str.substring(1),"-")){
                 if(opCount(str) == 2){
                 	//factor out the -1
-                    return -1*(Integer.parseInt(str.substring(1,str.lastIndexOf("-")))+
-                    Integer.parseInt(str.substring(str.lastIndexOf("-")+1)));
+                    return -1*(Double.parseDouble(str.substring(1,str.lastIndexOf("-")))+
+                    Double.parseDouble(str.substring(str.lastIndexOf("-")+1)));
                 }
                 else{
                 	/*this takes the negative number and adds the remaining numbers to it.
                 	 * I originally had it subtracting evaluate but that subtracts a negative
                 	 * number which is really addition.
                 	 */
-                    return Integer.parseInt(str.substring(0,str.indexOf("-",1)))+
+                    return Double.parseDouble(str.substring(0,str.indexOf("-",1)))+
                     evaluate(str.substring(str.indexOf("-",1)));
                 }
             }
         }
-        if(str.contains("*")){
+        if((str.indexOf("*") < str.indexOf("/") && str.indexOf("*") > 0) || (str.indexOf("*") > 0 && str.indexOf("/") == -1)){
         	//if the current * is at the first operator in the string
             if(lastOp(str.substring(0,str.indexOf("*"))).equals("")){
                 //System.out.println("m1"); used for testing
             	//if there are more operators to work with
                 if(opCount(str)!=1){
-                    return evaluate((Integer.parseInt(str.substring(0,str.indexOf("*")))*
-                                    Integer.parseInt(str.substring(str.indexOf("*")+1,str.indexOf(nextOp(str.substring(str.indexOf("*")+1)),str.indexOf("*")+
+                    return evaluate((Double.parseDouble(str.substring(0,str.indexOf("*")))*
+                                    Double.parseDouble(str.substring(str.indexOf("*")+1,str.indexOf(nextOp(str.substring(str.indexOf("*")+1)),str.indexOf("*")+
                                     1))))+ str.substring(str.indexOf(nextOp(str.substring(str.indexOf("*")+1)),str.indexOf("*")+1)));
                 }
                 //if the current operator is the only one
                 else{
-                    return evaluate(Integer.parseInt(str.substring(0,str.indexOf("*")))*Integer.parseInt(str.substring(str.indexOf("*")+1)) + "");
+                    return evaluate(Double.parseDouble(str.substring(0,str.indexOf("*")))*Double.parseDouble(str.substring(str.indexOf("*")+1)) + "");
                 }
             }
             //if it is NOT the last operator
             else if(!nextOp(str.substring(str.indexOf("*")+1)).equals("")){
                 //System.out.println("m2"); used for testing
                 return evaluate(str.substring(0,str.lastIndexOf(lastOp(str.substring(0,str.indexOf("*"))),str.indexOf("*"))+1)+
-                                    (Integer.parseInt(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("*")-1)),str.indexOf("*"))+
-                                    1,str.indexOf("*")))* Integer.parseInt(str.substring(str.indexOf("*")+1,
+                                    (Double.parseDouble(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("*")-1)),str.indexOf("*"))+
+                                    1,str.indexOf("*")))* Double.parseDouble(str.substring(str.indexOf("*")+1,
                                     str.indexOf(nextOp(str.substring(str.indexOf("*")+1)),str.indexOf("*")+1))))+
                                     str.substring(str.indexOf(nextOp(str.substring(str.indexOf("*")+1)),str.indexOf("*")+1)));
             }
             else{
                 //System.out.println("m3"); used for testing
                 return evaluate(str.substring(0,str.lastIndexOf(lastOp(str.substring(0,str.indexOf("*"))))+1)+
-                                    (Integer.parseInt(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("*")-1)))+1,str.indexOf("*")))*
-                                    Integer.parseInt(str.substring(str.indexOf("*")+1))));
+                                    (Double.parseDouble(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("*")-1)))+1,str.indexOf("*")))*
+                                    Double.parseDouble(str.substring(str.indexOf("*")+1))));
+            }
+        }
+        if((str.indexOf("/") < str.indexOf("*") && str.indexOf("/") > 0) || (str.indexOf("/") > 0 && str.indexOf("*") == -1)){
+        	//if the current / is at the first operator in the string
+            if(lastOp(str.substring(0,str.indexOf("/"))).equals("")){
+                //System.out.println("m1"); used for testing
+            	//if there are more operators to work with
+                if(opCount(str)!=1){
+                    return evaluate((Double.parseDouble(str.substring(0,str.indexOf("/")))/
+                                    Double.parseDouble(str.substring(str.indexOf("/")+1,str.indexOf(nextOp(str.substring(str.indexOf("/")+1)),str.indexOf("/")+
+                                    1))))+ str.substring(str.indexOf(nextOp(str.substring(str.indexOf("/")+1)),str.indexOf("/")+1)));
+                }
+                //if the current operator is the only one
+                else{
+                    return evaluate(Double.parseDouble(str.substring(0,str.indexOf("/")))/Double.parseDouble(str.substring(str.indexOf("/")+1)) + "");
+                }
+            }
+            //if it is NOT the last operator
+            else if(!nextOp(str.substring(str.indexOf("/")+1)).equals("")){
+                //System.out.println("m2"); used for testing
+                return evaluate(str.substring(0,str.lastIndexOf(lastOp(str.substring(0,str.indexOf("/"))),str.indexOf("/"))+1)+
+                                    (Double.parseDouble(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("/")-1)),str.indexOf("/"))+
+                                    1,str.indexOf("/")))/ Double.parseDouble(str.substring(str.indexOf("/")+1,
+                                    str.indexOf(nextOp(str.substring(str.indexOf("/")+1)),str.indexOf("/")+1))))+
+                                    str.substring(str.indexOf(nextOp(str.substring(str.indexOf("/")+1)),str.indexOf("/")+1)));
+            }
+            else{
+                //System.out.println("m3"); used for testing
+                return evaluate(str.substring(0,str.lastIndexOf(lastOp(str.substring(0,str.indexOf("/"))))+1)+
+                                    (Double.parseDouble(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("/")-1)))+1,str.indexOf("/")))/
+                                    Double.parseDouble(str.substring(str.indexOf("/")+1))));
             }
         }
         /*
@@ -136,54 +170,54 @@ public class DP135easy{
             if(lastOp(str.substring(0,str.indexOf("+"))).equals("")){
                 //System.out.println("add1"); used for testing
                 if(opCount(str)!=1){
-                    return evaluate((Integer.parseInt(str.substring(0,str.indexOf("+")))+
-                                    Integer.parseInt(str.substring(str.indexOf("+")+1,str.indexOf(nextOp(str.substring(str.indexOf("+")+1)),str.indexOf("+")+
+                    return evaluate((Double.parseDouble(str.substring(0,str.indexOf("+")))+
+                                    Double.parseDouble(str.substring(str.indexOf("+")+1,str.indexOf(nextOp(str.substring(str.indexOf("+")+1)),str.indexOf("+")+
                                     1))))+ str.substring(str.indexOf(nextOp(str.substring(str.indexOf("+")+1)),str.indexOf("+")+1)));
                 }
                 else{
-                    return evaluate(Integer.parseInt(str.substring(0,str.indexOf("+")))+Integer.parseInt(str.substring(str.indexOf("+")+1)) + "");
+                    return evaluate(Double.parseDouble(str.substring(0,str.indexOf("+")))+Double.parseDouble(str.substring(str.indexOf("+")+1)) + "");
                 }
             }
             else if(!nextOp(str.substring(str.indexOf("+")+1)).equals("")){
                 //System.out.println("add2"); used for testing
                 return evaluate(str.substring(0,str.lastIndexOf(lastOp(str.substring(0,str.indexOf("+"))),str.indexOf("+"))+1)+
-                                    (Integer.parseInt(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("+")-1)),str.indexOf("+"))+
+                                    (Double.parseDouble(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("+")-1)),str.indexOf("+"))+
                                     1,str.indexOf("+")))+
-                                    Integer.parseInt(str.substring(str.indexOf("+")+1,str.indexOf(nextOp(str.substring(str.indexOf("+")+1)),str.indexOf("+")
+                                    Double.parseDouble(str.substring(str.indexOf("+")+1,str.indexOf(nextOp(str.substring(str.indexOf("+")+1)),str.indexOf("+")
                                     +1))))+
                                     str.substring(str.indexOf(nextOp(str.substring(str.indexOf("+")+1)),str.indexOf("+")+1)));
             }
             else{
                 //System.out.println("add3"); used for testing
                 return evaluate(str.substring(0,str.indexOf(lastOp(str.substring(0,str.indexOf("+"))))+1)+
-                                    (Integer.parseInt(str.substring(str.indexOf(lastOp(str.substring(0,str.indexOf("+")-1)))+1,str.indexOf("+")))+
-                                    Integer.parseInt(str.substring(str.indexOf("+")+1))));
+                                    (Double.parseDouble(str.substring(str.indexOf(lastOp(str.substring(0,str.indexOf("+")-1)))+1,str.indexOf("+")))+
+                                    Double.parseDouble(str.substring(str.indexOf("+")+1))));
             }
         }
         else if((str.indexOf("-") < str.indexOf("+") && str.indexOf("-") > 0) || (str.indexOf("-") > 0 && str.indexOf("+") == -1)){
             if(lastOp(str.substring(0,str.indexOf("-"))).equals("")){
                 //System.out.println("sub1"); used for testing
                 if(opCount(str)!=1){
-                    return evaluate((Integer.parseInt(str.substring(0,str.indexOf("-")))-
-                                    Integer.parseInt(str.substring(str.indexOf("-")+1,str.indexOf(nextOp(str.substring(str.indexOf("-")+1)),str.indexOf("-")+
+                    return evaluate((Double.parseDouble(str.substring(0,str.indexOf("-")))-
+                                    Double.parseDouble(str.substring(str.indexOf("-")+1,str.indexOf(nextOp(str.substring(str.indexOf("-")+1)),str.indexOf("-")+
                                     1))))+ str.substring(str.indexOf(nextOp(str.substring(str.indexOf("-")+1)),str.indexOf("-")+1)));
                 }
                 else{
-                    return evaluate(Integer.parseInt(str.substring(0,str.indexOf("-")))-Integer.parseInt(str.substring(str.indexOf("-")+1)) + "");
+                    return evaluate(Double.parseDouble(str.substring(0,str.indexOf("-")))-Double.parseDouble(str.substring(str.indexOf("-")+1)) + "");
                 }
             }
             else if(!nextOp(str.substring(str.indexOf("-")+1)).equals("")){
                 //System.out.println("sub2"); used for testing
                 return evaluate(str.substring(0,str.lastIndexOf(lastOp(str.substring(0,str.indexOf("-"))),str.indexOf("-"))+1)+
-                                    (Integer.parseInt(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("-")-1)),str.indexOf("-"))+
-                                    1,str.indexOf("-")))-Integer.parseInt(str.substring(str.indexOf("-")+1,str.indexOf(nextOp(str.substring(str.indexOf("-")+1)),
+                                    (Double.parseDouble(str.substring(str.lastIndexOf(lastOp(str.substring(0,str.indexOf("-")-1)),str.indexOf("-"))+
+                                    1,str.indexOf("-")))-Double.parseDouble(str.substring(str.indexOf("-")+1,str.indexOf(nextOp(str.substring(str.indexOf("-")+1)),
                                     str.indexOf("-")+1))))+str.substring(str.indexOf(nextOp(str.substring(str.indexOf("-")+1)),str.indexOf("-")+1)));
             }
             else{
                 //System.out.println("sub3"); used for testing
                 return evaluate(str.substring(0,str.indexOf(lastOp(str.substring(0,str.indexOf("-"))))+1)+
-                                    (Integer.parseInt(str.substring(str.indexOf(lastOp(str.substring(0,str.indexOf("-")-1)))+1,str.indexOf("-")))-
-                                    Integer.parseInt(str.substring(str.indexOf("-")+1))));
+                                    (Double.parseDouble(str.substring(str.indexOf(lastOp(str.substring(0,str.indexOf("-")-1)))+1,str.indexOf("-")))-
+                                    Double.parseDouble(str.substring(str.indexOf("-")+1))));
             }
         }
         //System.out.println("failed"); used for testing
@@ -198,6 +232,7 @@ public class DP135easy{
             case 0: return "+";
             case 1: return "-";
             case 2: return "*";
+            case 3: return "/";
             default: System.out.println("incorrect value for int to operator");
                      break;
         }
@@ -210,7 +245,7 @@ public class DP135easy{
         String currentSub = new String();
         for(int i = 0; i < str.length(); i++){
             currentSub = str.substring(i,i+1);
-            if(currentSub.equals("-") || currentSub.equals("+") || currentSub.equals("*"))
+            if(currentSub.equals("-") || currentSub.equals("+") || currentSub.equals("*") || currentSub.equals("/"))
                 count += 1;
         }
         return count;
@@ -221,7 +256,7 @@ public class DP135easy{
         String currentSub;
         for(int i = 0; i < str.length(); i++){
             currentSub = str.substring(i,i+1);
-            if(currentSub.equals("-") || currentSub.equals("+") || currentSub.equals("*")){
+            if(currentSub.equals("-") || currentSub.equals("+") || currentSub.equals("*") || currentSub.equals("/")){
                 if(currentSub.equals(op)){
                     //System.out.println("nextopis match"); used for testing
                     return true;
@@ -237,7 +272,7 @@ public class DP135easy{
     private static String nextOp(String str){
         for(int i = 0; i < str.length(); i++){
            String currentSub = str.substring(i,i+1);
-            if(currentSub.equals("-") || currentSub.equals("+") || currentSub.equals("*")){
+            if(currentSub.equals("-") || currentSub.equals("+") || currentSub.equals("*") || currentSub.equals("/")){
                 //System.out.println("match"); used for testing
                 return currentSub;
             }
@@ -251,10 +286,16 @@ public class DP135easy{
         for(int i = str.length(); i > 0; i--){
            currentSub = str.substring(i-1,i);
            //System.out.println(currentSub); used for testing
-            if(currentSub.equals("-") || currentSub.equals("+") || currentSub.equals("*")){
+            if(currentSub.equals("-") || currentSub.equals("+") || currentSub.equals("*") || currentSub.equals("/")){
                 return currentSub;
             }
         }
         return "";
+    }
+    
+    //rounds division to two decimal places
+    public static double roundTo2Decimals(double val) {
+        DecimalFormat df2 = new DecimalFormat("###.##");
+        return Double.valueOf(df2.format(val));
     }
 }
