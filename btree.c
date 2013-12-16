@@ -12,6 +12,7 @@ int isInTree(struct node* current, int target);
 struct node* newBtree(int data);
 void insert(struct node* head, int newData);
 int count(struct node* head);
+void destroy(struct node* head);
 
 int main(int argc, char* argv[]){
     struct node* head = newBtree(5);
@@ -31,6 +32,7 @@ int main(int argc, char* argv[]){
         printf("faild2\n"); 
     }
     printf("%i\n", count(head));
+    destroy(head);
     return 0;
 }
 
@@ -80,4 +82,14 @@ int count(struct node* head){
     }else{
         return count(head -> right) + 1; 
     }
+}
+
+void destroy(struct node* head){
+    if(head -> left != NULL){
+        destroy(head -> left); 
+    }
+    if(head -> right != NULL){
+        destroy(head -> right); 
+    }
+    free(head);
 }
