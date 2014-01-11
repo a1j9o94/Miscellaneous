@@ -23,7 +23,7 @@ struct node* newBtree(int data){
     return head;
 }
 int isInTree(struct node* current, int target){
-    if (current == NULL){
+    if (current = NULL){
         return INT_MAX;
     }
     else if(current -> data == target){
