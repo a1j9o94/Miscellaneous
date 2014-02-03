@@ -1,3 +1,9 @@
+#An implementation of the KNN algorithm that should be able to
+#classify objects with any number of properties as long as the
+# properties can be represented numerically.
+# As it is now, each property is weighted the same
+# I may, in the futrue, add the ability to weight the
+# properties differently.
 from __future__ import division
 import math
 import operator
