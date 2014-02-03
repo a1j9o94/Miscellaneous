@@ -49,6 +49,8 @@ class Node():
             if typeCount[nodeType] > maxValue:
                 self.nodeType = nodeType
                 maxValue = typeCount[nodeType]
+            #if the type count for this value is the same as the max type count
+            # randomly pick between one of them
             if typeCount[nodeType] == maxValue:
                 randomNumber = random.random()
                 if randomNumber > .5:
@@ -56,11 +58,17 @@ class Node():
 class NodeList():
     nodes = []
     k = 0
+    # a map of each dimension to a tuple that contains
+    # the minimum and maximum values for each dimension
+    # used for scaling the dimensions so that
+    # larger differences don't have a huge effect
+    # on the distance
     minMaxMap = {}
     def __init__(self, k):
         self.k = k
     def addSingleNode(self, node):
         for dimension in node.values:
+            #update the min max map if appropriate
             if dimension in self.minMaxMap:
                 if node.values[dimension] < self.minMaxMap[dimension][0]:
                     self.minMaxMap[dimension][0] = node.values[dimension]
@@ -81,6 +89,7 @@ class NodeList():
                 print(node.nodeType)
     def generateRandom(self):
         unknownValues = {}
+        #get random values withen each dimensions range
         for dimension in self.minMaxMap:
             unknownValues[dimension] = random.randint(self.minMaxMap[dimension][0],self.minMaxMap[dimension][1])    
         newNode = Node(unknownValues, "unknown")
