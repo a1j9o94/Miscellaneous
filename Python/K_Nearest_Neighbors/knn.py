@@ -8,6 +8,7 @@ from __future__ import division
 import math
 import operator
 import random
+import matplotlib.pyplot as plt
 
 class Node():
     #type of the node
@@ -128,5 +129,23 @@ nodes = [
 
 nodeList = NodeList(3)
 nodeList.addListOfNodes(nodes)
-nodeList.addSingleNode(nodeList.generateRandom())
+for node in nodeList.nodes:
+    if node.nodeType == "apartment":
+        plt.plot(node.values["rooms"],node.values["area"],'ro')
+    if node.nodeType == "house":
+        plt.plot(node.values["rooms"],node.values["area"],'go')
+    if node.nodeType == "flat":
+        plt.plot(node.values["rooms"],node.values["area"],'bo')
+plt.axis([
+    nodeList.minMaxMap["rooms"][0] - 1,
+    nodeList.minMaxMap["rooms"][1] + 1,
+    nodeList.minMaxMap["area"][0] - 10,
+    nodeList.minMaxMap["area"][1] + 1
+])
+newNode = nodeList.generateRandom()
+nodeList.addSingleNode(newNode)
 nodeList.processNodes()
+plt.plot(newNode.values["rooms"],newNode.values["area"], 'ko')
+plt.ylabel('area')
+plt.xlabel('rooms')
+plt.show()
